@@ -26,6 +26,6 @@
     "check:ts": "tsc --noEmit",
     "lint": "eslint src",
     "check": "bun style && bun check:ts && bun lint",
-    "dev": "bun run src/index.ts"
+    "dev": "bun --hot src/index.ts"
   }
 }
