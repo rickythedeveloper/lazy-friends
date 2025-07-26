@@ -1,5 +1,5 @@
 import express from "express";
-import { auth, requiredScopes } from "express-oauth2-jwt-bearer";
+import { auth } from "express-oauth2-jwt-bearer";
 import cors from "cors";
 
 const app = express();
