@@ -6,6 +6,7 @@
   "devDependencies": {
     "@eslint/js": "^9.32.0",
     "@types/bun": "latest",
+    "@types/cors": "^2.8.19",
     "@types/express": "^5.0.3",
     "eslint": "^9.32.0",
     "eslint-config-prettier": "^10.1.8",
@@ -16,12 +17,15 @@
     "typescript": "^5.8.3"
   },
   "dependencies": {
-    "express": "^5.1.0"
+    "cors": "^2.8.5",
+    "express": "^5.1.0",
+    "express-oauth2-jwt-bearer": "^1.6.1"
   },
   "scripts": {
     "style": "prettier src --write",
     "check:ts": "tsc --noEmit",
     "lint": "eslint src",
-    "check": "bun style && bun check:ts && bun lint"
+    "check": "bun style && bun check:ts && bun lint",
+    "dev": "bun run src/index.ts"
   }
 }

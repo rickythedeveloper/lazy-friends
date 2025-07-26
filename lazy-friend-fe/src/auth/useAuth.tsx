@@ -12,6 +12,7 @@ export function useAuth(): {
   isAuthenticated: boolean;
   isLoading: boolean;
   user: User | undefined;
+  getAccessToken: () => Promise<string | undefined>;
 } {
   const {
     loginWithRedirect: auth0Login,
@@ -19,6 +20,7 @@ export function useAuth(): {
     isAuthenticated,
     isLoading,
     user: auth0User,
+    getAccessTokenWithPopup,
   } = useAuth0();
 
   const login = () => auth0Login();
@@ -30,11 +32,20 @@ export function useAuth(): {
       ? { name: auth0User.name, email: auth0User.email }
       : undefined;
 
+  // Try get the token silently first
+  const getAccessToken = () =>
+    getAccessTokenWithPopup({
+      authorizationParams: {
+        audience: "lazy-friends.ricky-kawagishi.com",
+      },
+    });
+
   return {
     login,
     logout,
     isAuthenticated,
     isLoading,
     user,
+    getAccessToken,
   };
 }
