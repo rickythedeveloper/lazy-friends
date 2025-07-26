@@ -11,6 +11,14 @@ const compat = new FlatCompat({
 
 const eslintConfig = [
   ...compat.extends("next/core-web-vitals", "next/typescript"),
+  {
+    rules: {
+      'no-restricted-imports': ['error', {
+        "name": '@auth0/auth0-react',
+        "message": "Use the in-house useAuth"
+      }],
+    }
+  }
 ];
 
 export default eslintConfig;

@@ -4,6 +4,7 @@
     "": {
       "name": "lazy-friend-fe",
       "dependencies": {
+        "@auth0/auth0-react": "^2.4.0",
         "next": "15.4.4",
         "react": "19.1.0",
         "react-dom": "19.1.0",
@@ -25,6 +26,10 @@
     "@alloc/quick-lru": ["@alloc/quick-lru@5.2.0", "", {}, "sha512-UrcABB+4bUrFABwbluTIBErXwvbsU/V7TZWfmbgJfbkwiBuziS9gxdODUyuiecfdGQ85jglMW6juS3+z5TsKLw=="],
 
     "@ampproject/remapping": ["@ampproject/remapping@2.3.0", "", { "dependencies": { "@jridgewell/gen-mapping": "^0.3.5", "@jridgewell/trace-mapping": "^0.3.24" } }, "sha512-30iZtAPgz+LTIYoeivqYo853f02jBYSd5uGnGpkFV0M3xOt9aN73erkgYAmZU43x4VfqcnLxW9Kpg3R5LC4YYw=="],
+
+    "@auth0/auth0-react": ["@auth0/auth0-react@2.4.0", "", { "dependencies": { "@auth0/auth0-spa-js": "^2.2.0" }, "peerDependencies": { "react": "^16.11.0 || ^17 || ^18 || ^19", "react-dom": "^16.11.0 || ^17 || ^18 || ^19" } }, "sha512-5bt3sO9FVupNM15IpqyYu/2OPHpLI5El7RgWLQXZOPbnCBbtl+VgdHR+H2NfhNQ4SqQtC/5uKbHWafcVcsxkiw=="],
+
+    "@auth0/auth0-spa-js": ["@auth0/auth0-spa-js@2.3.0", "", {}, "sha512-zAW6w79UO+G1+3AxboVQIUIZy05xluSOb1ymGg2dqG0pIi0JxEtZGec05BOf2LJ9SehzW4WeCYUQsYD9BjrVpQ=="],
 
     "@emnapi/core": ["@emnapi/core@1.4.5", "", { "dependencies": { "@emnapi/wasi-threads": "1.0.4", "tslib": "^2.4.0" } }, "sha512-XsLw1dEOpkSX/WucdqUhPWP7hDxSvZiY+fsUC14h+FtQ2Ifni4znbBt8punRX+Uj2JG/uDb8nEHVKvrVlvdZ5Q=="],
 
