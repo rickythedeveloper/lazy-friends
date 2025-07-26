@@ -1,6 +1,6 @@
 {
   "name": "be",
-  "module": "index.ts",
+  "module": "src/index.ts",
   "type": "module",
   "private": true,
   "devDependencies": {
@@ -18,7 +18,9 @@
     "express": "^5.1.0"
   },
   "scripts": {
-    "lint": "eslint .",
-    "style": "prettier . --write"
+    "style": "prettier src --write",
+    "check:ts": "tsc --noEmit",
+    "lint": "eslint src",
+    "check": "bun style && bun check:ts && bun lint"
   }
 }
