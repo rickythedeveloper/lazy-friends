@@ -1,9 +1,9 @@
-'use client'
+"use client";
 
-import {useAuth} from "@/auth/useAuth";
+import { useAuth } from "@/auth/useAuth";
 
 export default function LoginPage() {
-    const {login} = useAuth()
+  const { login } = useAuth();
 
-    return <button onClick={() => login()}>Log in</button>
+  return <button onClick={() => login()}>Log in</button>;
 }

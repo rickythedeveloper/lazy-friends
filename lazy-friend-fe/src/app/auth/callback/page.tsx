@@ -1,12 +1,12 @@
-'use client'
+"use client";
 
-import {redirect} from "next/navigation";
-import {useEffect} from "react";
+import { redirect } from "next/navigation";
+import { useEffect } from "react";
 
 export default function AuthCallbackPage() {
-    useEffect(() => {
-        redirect('/profile')
-    }, []);
+  useEffect(() => {
+    redirect("/profile");
+  }, []);
 
-    return <div>auth callback page</div>
+  return <div>auth callback page</div>;
 }
