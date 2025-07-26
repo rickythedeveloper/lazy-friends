@@ -1,0 +1,40 @@
+services:
+  migrate:
+    build: .
+    command: [
+      "update",
+      "--changelog-file=db.changelog-master.xml",
+      "--url=jdbc:postgresql://db:5432/postgres",
+      "--username=postgres",
+      "--password=postgres"
+    ]
+    volumes:
+      - ./liquibase/changelog:/liquibase/changelog
+      - ./liquibase/liquibase.docker.properties:/liquibase/liquibase.properties
+    depends_on:
+      - db
+
+  rollback:
+    build: .
+    command: [
+      "rollback-count",
+      "--changelog-file=db.changelog-master.xml",
+      "--url=jdbc:postgresql://db:5432/postgres",
+      "--username=postgres",
+      "--password=postgres",
+      "--count=1"
+    ]
+    volumes:
+      - ./liquibase/changelog:/liquibase/changelog
+      - ./liquibase/liquibase.docker.properties:/liquibase/liquibase.properties
+    depends_on:
+      - db
+
+  db:
+    image: postgres:17
+    environment:
+      - POSTGRES_DB=postgres
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+    ports:
+      - "5432:5432" 
