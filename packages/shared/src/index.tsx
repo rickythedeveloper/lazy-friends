@@ -1,4 +1,6 @@
-import {type ReactNode} from "react";
+'use client'
+
+import type {ReactNode} from "react";
 
 export {useQuery, QueryClient} from '@tanstack/react-query'
 import {QueryClientProvider as TanStackQueryClientProvider, QueryClient} from '@tanstack/react-query'

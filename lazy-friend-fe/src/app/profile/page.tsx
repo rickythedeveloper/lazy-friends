@@ -3,7 +3,6 @@
 import { useAuth } from "@/auth/useAuth";
 import { useQuery } from "@lf/shared";
 import { useEffect, useState } from "react";
-import { linkGc } from "next/dist/client/app-link-gc";
 
 export default function ProfilePage() {
   const { isAuthenticated, isLoading, user, getAccessToken } = useAuth();

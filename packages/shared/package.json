@@ -5,14 +5,15 @@
   "type": "module",
   "private": true,
   "devDependencies": {
-    "@types/bun": "latest"
+    "@tanstack/react-query": "^5.83.0",
+    "@types/bun": "latest",
+    "@types/react": "^19.1.8",
+    "react": "^19.1.0"
   },
   "peerDependencies": {
+    "@tanstack/react-query": "^5.83.0",
     "react": "^19",
-    "typescript": "^5",
-    "@tanstack/react-query": "^5.83.0"
-  },
-  "dependencies": {
+    "typescript": "^5"
   },
   "files": [
     "src/**/*"

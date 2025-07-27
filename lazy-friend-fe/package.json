@@ -13,7 +13,7 @@
   },
   "dependencies": {
     "@auth0/auth0-react": "^2.4.0",
-    "@lf/shared": "link:@lf/shared",
+    "@lf/shared": "file:../packages/shared",
     "next": "15.4.4",
     "react": "19.1.0",
     "react-dom": "19.1.0"

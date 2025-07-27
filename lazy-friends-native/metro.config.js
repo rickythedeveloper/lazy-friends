@@ -40,16 +40,16 @@ config.resolver.nodeModulesPaths = [
     // path.resolve(sharedRoot, 'node_modules'),
 ]
 
-config.resolver.resolveRequest = (context, moduleName, platform) => {
-    if (moduleName === 'react') {
-        return {
-            filePath: path.resolve(projectRoot, 'node_modules/react/index.js'),
-            type: 'sourceFile'
-        }
-    }
-
-    return context.resolveRequest(context, moduleName, platform);
-}
+// config.resolver.resolveRequest = (context, moduleName, platform) => {
+//     if (moduleName === 'react') {
+//         return {
+//             filePath: path.resolve(projectRoot, 'node_modules/react/index.js'),
+//             type: 'sourceFile'
+//         }
+//     }
+//
+//     return context.resolveRequest(context, moduleName, platform);
+// }
 
 console.log(sharedRoot)
 
