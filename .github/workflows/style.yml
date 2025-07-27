@@ -9,6 +9,7 @@ jobs:
   build:
     runs-on: ubuntu-22.04
     strategy:
+      fail-fast: false
       matrix:
         package: ['be', 'lazy-friend-fe', 'lazy-friends-native', 'packages/shared']
         node-version: [22]
@@ -18,17 +19,16 @@ jobs:
         uses: pnpm/action-setup@v4
         with:
           version: 10
-      - name: CD to BE
-        run: cd be
       - name: Use Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node-version }}
-#          cache: 'pnpm'
+          cache: 'pnpm'
+        working-directory: ./${{ matrix.package }}
       - name: Install dependencies
         run: pnpm install
         working-directory: ./${{ matrix.package }}
 
-      - name: style BE
+      - name: Check style
         run: pnpm style:ci
         working-directory: ./${{ matrix.package }}
