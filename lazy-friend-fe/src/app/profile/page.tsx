@@ -1,9 +1,12 @@
 "use client";
 
 import { useAuth } from "@/auth/useAuth";
+import { stuff } from "@lf/shared";
 
 export default function ProfilePage() {
   const { isAuthenticated, isLoading, user, getAccessToken } = useAuth();
+
+  console.log(stuff);
 
   const getData = async () => {
     const accessToken = await getAccessToken();

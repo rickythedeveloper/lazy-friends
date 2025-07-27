@@ -1,6 +1,7 @@
 {
-  "name": "shared",
-  "module": "index.ts",
+  "name": "@lf/shared",
+  "module": "src/index.ts",
+  "main": "src/index.ts",
   "type": "module",
   "private": true,
   "devDependencies": {
