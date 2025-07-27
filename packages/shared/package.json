@@ -17,5 +17,8 @@
   },
   "files": [
     "src/**/*"
-  ]
+  ],
+  "exports": {
+    ".": "./src/index.tsx"
+  }
 }

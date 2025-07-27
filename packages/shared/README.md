@@ -3,13 +3,5 @@
 To install dependencies:
 
 ```bash
-bun install
+pnpm install
 ```
-
-To run:
-
-```bash
-bun run index.tsx
-```
-
-This project was created using `bun init` in bun v1.2.19. [Bun](https://bun.com) is a fast all-in-one JavaScript runtime.
