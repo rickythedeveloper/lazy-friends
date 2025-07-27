@@ -17,6 +17,8 @@ jobs:
         uses: pnpm/action-setup@v4
         with:
           version: 10
+      - name: CD to BE
+        run: cd be
       - name: Use Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v4
         with:
@@ -24,7 +26,6 @@ jobs:
           cache: 'pnpm'
       - name: Install dependencies
         run: pnpm install
-      - name: CD to BE
-        run: cd be
+
       - name: style BE
         run: pnpm style
