@@ -10,6 +10,7 @@ jobs:
     runs-on: ubuntu-22.04
     strategy:
       matrix:
+        package: ['be', 'lazy-friend-fe', 'lazy-friends-native', 'packages/shared']
         node-version: [22]
     steps:
       - uses: actions/checkout@v4
@@ -26,6 +27,8 @@ jobs:
 #          cache: 'pnpm'
       - name: Install dependencies
         run: pnpm install
+        working-directory: ./${{ matrix.package }}
 
       - name: style BE
         run: pnpm style
+        working-directory: ./${{ matrix.package }}
