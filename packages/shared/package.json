@@ -24,6 +24,7 @@
   },
   "scripts": {
     "style": "prettier . --write",
-    "style:ci": "prettier . --check"
+    "style:ci": "prettier . --check",
+    "typeCheck": "tsc --noEmit"
   }
 }

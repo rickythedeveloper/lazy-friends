@@ -6,7 +6,7 @@ on:
     branches: [ main ]
 
 jobs:
-  build:
+  check-styles:
     runs-on: ubuntu-22.04
     strategy:
       fail-fast: false
@@ -26,7 +26,9 @@ jobs:
       - name: Install dependencies
         run: pnpm install
         working-directory: ./${{ matrix.package }}
-
       - name: Check style
         run: pnpm style:ci
+        working-directory: ./${{ matrix.package }}
+      - name: Check types
+        run: pnpm typeCheck
         working-directory: ./${{ matrix.package }}

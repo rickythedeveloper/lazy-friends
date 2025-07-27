@@ -24,7 +24,7 @@
   "scripts": {
     "style": "prettier . --write",
     "style:ci": "prettier . --check",
-    "check:ts": "tsc --noEmit",
+    "typeCheck": "tsc --noEmit",
     "lint": "eslint src",
     "check": "bun style && bun check:ts && bun lint",
     "dev": "bun --hot src/index.ts"
