@@ -1,0 +1,24 @@
+{
+  "name": "@lf/shared",
+  "module": "src/index.tsx",
+  "main": "src/index.tsx",
+  "type": "module",
+  "private": true,
+  "devDependencies": {
+    "@tanstack/react-query": "^5.83.0",
+    "@types/bun": "latest",
+    "@types/react": "^19.1.8",
+    "react": "^19.1.0"
+  },
+  "peerDependencies": {
+    "@tanstack/react-query": "^5.83.0",
+    "react": "^19",
+    "typescript": "^5"
+  },
+  "files": [
+    "src/**/*"
+  ],
+  "exports": {
+    ".": "./src/index.tsx"
+  }
+}
