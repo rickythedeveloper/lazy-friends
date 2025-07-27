@@ -1,4 +1,4 @@
-name: Check styles
+name: Check styles, types and lint
 on:
   push:
     branches: [ main ]
@@ -36,4 +36,7 @@ jobs:
         working-directory: ./${{ matrix.package }}
       - name: Check types
         run: pnpm typeCheck
+        working-directory: ./${{ matrix.package }}
+      - name: Lint
+        run: pnpm lint
         working-directory: ./${{ matrix.package }}
