@@ -1,7 +1,7 @@
 import express from "express";
 import { auth } from "express-oauth2-jwt-bearer";
 import cors from "cors";
-import { Client, Pool } from "pg";
+import { Pool } from "pg";
 
 const app = express();
 const port = 3001;
