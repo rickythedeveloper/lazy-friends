@@ -1,6 +1,7 @@
 import express from "express";
 import { auth } from "express-oauth2-jwt-bearer";
 import cors from "cors";
+import { Client, Pool } from "pg";
 
 const app = express();
 const port = 3001;
@@ -9,6 +10,21 @@ const checkJwt = auth({
   audience: "lazy-friends.ricky-kawagishi.com",
   issuerBaseURL: "https://dev-cx465djnl0dls2wi.uk.auth0.com/",
 });
+
+const pool = new Pool({
+  database: "postgres",
+  port: 5432,
+  password: "postgres",
+  user: "postgres",
+});
+pool
+  .query("SELECT version(), $1 as message;", ["hello world"])
+  .then((result) => {
+    console.log(result.rows[0]);
+  })
+  .catch((error: unknown) => {
+    console.error(error);
+  });
 
 app.use(
   cors({
