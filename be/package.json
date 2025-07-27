@@ -22,10 +22,11 @@
     "express-oauth2-jwt-bearer": "^1.6.1"
   },
   "scripts": {
-    "style": "prettier src --write",
-    "check:ts": "tsc --noEmit",
+    "style": "prettier . --write",
+    "style:ci": "prettier . --check",
+    "typeCheck": "tsc --noEmit",
     "lint": "eslint src",
-    "check": "bun style && bun check:ts && bun lint",
-    "dev": "bun --hot src/index.ts"
+    "check": "pnpm style && pnpm check:ts && pnpm lint",
+    "dev": "pnpm --hot src/index.ts"
   }
 }

@@ -8,8 +8,9 @@
     "start": "next start",
     "lint": "next lint",
     "style": "prettier . --write",
-    "check:ts": "tsc --noEmit",
-    "check": "bun style && bun check:ts && bun lint"
+    "style:ci": "prettier . --check",
+    "typeCheck": "tsc --noEmit",
+    "check": "pnpm style && pnpm typeCheck && pnpm lint"
   },
   "dependencies": {
     "@auth0/auth0-react": "^2.4.0",
