@@ -22,7 +22,8 @@
     "express-oauth2-jwt-bearer": "^1.6.1"
   },
   "scripts": {
-    "style": "prettier src --write",
+    "style": "prettier . --write",
+    "style:ci": "prettier . --check",
     "check:ts": "tsc --noEmit",
     "lint": "eslint src",
     "check": "bun style && bun check:ts && bun lint",

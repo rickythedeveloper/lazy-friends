@@ -10,7 +10,9 @@
     "web": "expo start --web",
     "lint": "expo lint",
     "doctor": "bunx expo-doctor",
-    "check": "bun lint && bun doctor"
+    "style": "prettier . --write",
+    "style:ci": "prettier . --check",
+    "check": "pnpm style && pnpm lint && pnpm doctor"
   },
   "dependencies": {
     "@expo/vector-icons": "^14.1.0",

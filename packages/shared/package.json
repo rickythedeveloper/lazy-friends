@@ -21,5 +21,9 @@
   ],
   "exports": {
     ".": "./src/index.tsx"
+  },
+  "scripts": {
+    "style": "prettier . --write",
+    "style:ci": "prettier . --check"
   }
 }
