@@ -10,6 +10,7 @@ import {
 
 export function QueryClientProvider({
   children,
+
   client,
 }: {
   children?: ReactNode;
