@@ -1,7 +1,7 @@
 {
   "name": "@lf/shared",
-  "module": "src/index.ts",
-  "main": "src/index.ts",
+  "module": "src/index.tsx",
+  "main": "src/index.tsx",
   "type": "module",
   "private": true,
   "devDependencies": {
@@ -9,5 +9,8 @@
   },
   "peerDependencies": {
     "typescript": "^5"
+  },
+  "dependencies": {
+    "react": "^19.1.0"
   }
 }
