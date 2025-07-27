@@ -8,9 +8,11 @@
     "@types/bun": "latest",
     "@types/cors": "^2.8.19",
     "@types/express": "^5.0.3",
+    "@types/pg": "^8.15.4",
     "eslint": "^9.32.0",
     "eslint-config-prettier": "^10.1.8",
     "prettier": "3.6.2",
+    "tsx": "^4.20.3",
     "typescript-eslint": "^8.38.0"
   },
   "peerDependencies": {
@@ -19,7 +21,8 @@
   "dependencies": {
     "cors": "^2.8.5",
     "express": "^5.1.0",
-    "express-oauth2-jwt-bearer": "^1.6.1"
+    "express-oauth2-jwt-bearer": "^1.6.1",
+    "pg": "^8.16.3"
   },
   "scripts": {
     "style": "prettier . --write",
@@ -27,6 +30,6 @@
     "typeCheck": "tsc --noEmit",
     "lint": "eslint src",
     "check": "pnpm style && pnpm check:ts && pnpm lint",
-    "dev": "pnpm --hot src/index.ts"
+    "dev": "tsx watch src/index.ts"
   }
 }
