@@ -1,7 +1,7 @@
 import express from "express";
 import { auth } from "express-oauth2-jwt-bearer";
 import cors from "cors";
-import { Pool } from "pg";
+import { getDbConnection } from "./dbService.ts";
 
 const app = express();
 const port = 3001;
@@ -11,19 +11,15 @@ const checkJwt = auth({
   issuerBaseURL: "https://dev-cx465djnl0dls2wi.uk.auth0.com/",
 });
 
-const pool = new Pool({
-  database: "postgres",
-  port: 5432,
-  password: "postgres",
-  user: "postgres",
-});
-pool
-  .query("SELECT version(), $1 as message;", ["hello world"])
+getDbConnection()
+  .then((db) => {
+    return db.query({ query: "select version()" });
+  })
   .then((result) => {
     console.log(result.rows[0]);
   })
   .catch((error: unknown) => {
-    console.error(error);
+    console.log(error);
   });
 
 app.use(
