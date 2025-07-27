@@ -21,10 +21,10 @@ jobs:
           version: 10
       - name: Use Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v4
+        working-directory: ./${{ matrix.package }}
         with:
           node-version: ${{ matrix.node-version }}
           cache: 'pnpm'
-        working-directory: ./${{ matrix.package }}
       - name: Install dependencies
         run: pnpm install
         working-directory: ./${{ matrix.package }}
