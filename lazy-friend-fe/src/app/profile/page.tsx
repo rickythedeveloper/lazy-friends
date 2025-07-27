@@ -1,7 +1,7 @@
 "use client";
 
 import { useAuth } from "@/auth/useAuth";
-import { useQuery } from "@lf/shared/src";
+import { useQuery } from "@lf/shared";
 import { useEffect, useState } from "react";
 import { linkGc } from "next/dist/client/app-link-gc";
 
