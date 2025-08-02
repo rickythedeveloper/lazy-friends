@@ -52,7 +52,7 @@ export default function ProfilePage() {
 
   return user ? (
     <div>
-      Hi {user.name} ({user.email}){loadButton}
+      Hi {user.name} ({user.email}, {user.id}){loadButton}
     </div>
   ) : (
     <div>Hi unknown user</div>

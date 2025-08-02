@@ -4,6 +4,9 @@ This folder provides tools to manage database migrations.
 ## Prerequisites
 - Docker
 
+## Start DB
+- `docke compose up db -d`
+
 ## Run migration
 - `docker-compose run migrate`
 

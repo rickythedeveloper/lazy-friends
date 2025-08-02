@@ -4,6 +4,7 @@ import { useAuth0 } from "@auth0/auth0-react";
 interface User {
   name: string;
   email: string;
+  id: string;
 }
 
 export function useAuth(): {
@@ -28,8 +29,8 @@ export function useAuth(): {
     auth0Logout({ logoutParams: { returnTo: window.location.origin } });
 
   const user: User | undefined =
-    !!auth0User && !!auth0User.name && !!auth0User.email
-      ? { name: auth0User.name, email: auth0User.email }
+    !!auth0User && !!auth0User.name && !!auth0User.email && !!auth0User.sub
+      ? { name: auth0User.name, email: auth0User.email, id: auth0User.sub }
       : undefined;
 
   // Try get the token silently first
