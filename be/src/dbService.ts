@@ -1,4 +1,5 @@
 import { Pool, type PoolClient, type QueryResult } from "pg";
+import { z } from "zod";
 
 const pool = new Pool({
   database: "postgres",
@@ -13,11 +14,25 @@ export async function getDbConnection(): Promise<DbClient> {
   return new DbClient(client);
 }
 
-class DbClient {
+export type DbValue = string | number | boolean | null;
+
+export class DbClient {
   constructor(private client: PoolClient) {}
 
-  async query({ query }: { query: string }): Promise<QueryResult> {
-    return await this.client.query(query);
+  async query<Row extends z.ZodObject>({
+    query,
+    values,
+    row_type,
+  }: {
+    query: string;
+    values?: DbValue[];
+    row_type: Row;
+  }): Promise<z.infer<Row>[]> {
+    const rows = await this.client.query(query, values);
+
+    const validatedRows = z.array(row_type).parse(rows.rows);
+
+    return validatedRows;
   }
 
   async beginTransaction() {

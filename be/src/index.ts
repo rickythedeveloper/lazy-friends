@@ -1,7 +1,10 @@
-import express from "express";
+import express, { type Request } from "express";
 import { auth } from "express-oauth2-jwt-bearer";
 import cors from "cors";
 import { getDbConnection } from "./dbService.ts";
+import { createGroup } from "./groups/operations.ts";
+import { getAuthContextOrThrow } from "./authContext/AuthContext.ts";
+import { z } from "zod";
 
 const app = express();
 const port = 3001;
@@ -13,10 +16,16 @@ const checkJwt = auth({
 
 getDbConnection()
   .then((db) => {
-    return db.query({ query: "select version()" });
+    return db.query({
+      query: "select version()",
+      row_type: z.object({ version: z.string() }),
+    });
   })
   .then((result) => {
-    console.log(result.rows[0]);
+    const row = result[0];
+    if (row) {
+      console.log(row.version);
+    }
   })
   .catch((error: unknown) => {
     console.log(error);
@@ -41,6 +50,19 @@ app.get("/public", (req, res) => {
 app.get("/users", checkJwt, (req, res) => {
   console.log("heyo private");
   res.json("Private endpoint");
+});
+
+app.post("/groups", checkJwt, async (req, res) => {
+  const authContext = getAuthContextOrThrow(req);
+  const db = await getDbConnection();
+
+  const createdGroup = await createGroup({
+    group: { title: "test groups" },
+    authContext,
+    db,
+  });
+
+  res.json(createdGroup);
 });
 
 app.listen(port, () => {
