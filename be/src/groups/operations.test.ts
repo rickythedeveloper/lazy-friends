@@ -2,7 +2,7 @@ import { afterAll, beforeAll, describe, expect, test } from "@jest/globals";
 
 import { execSync } from "child_process";
 import { createGroup } from "./operations.ts";
-import { DbClient, type DbConfig } from "../dbService.ts";
+import { DbClient, type DbConfig } from "../db/dbService.ts";
 import { createUser } from "../user/operations.ts";
 
 let dbClient: DbClient;

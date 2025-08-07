@@ -1,4 +1,4 @@
-import type { DbClient } from "../dbService.ts";
+import type { DbClient } from "../db/dbService.ts";
 import { z } from "zod";
 
 interface CreateUserParams {

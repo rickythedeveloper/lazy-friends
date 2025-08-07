@@ -9,17 +9,6 @@ export interface DbConfig {
   user: string;
 }
 
-const DB_CONFIG: DbConfig = {
-  database: "postgres",
-  port: 5432,
-  password: "postgres",
-  user: "postgres",
-};
-
-export function getDbConnection(): DbClient {
-  return new DbClient(DB_CONFIG);
-}
-
 export type DbValue = string | number | boolean | null;
 
 export class DbClient {

@@ -1,9 +1,9 @@
 import express from "express";
 import { auth } from "express-oauth2-jwt-bearer";
 import cors from "cors";
-import { getDbConnection } from "./dbService.ts";
 import { createGroup } from "./groups/operations.ts";
 import { getAuthContextOrThrow } from "./authContext/AuthContext.ts";
+import { getDbConnection } from "./db/connection.ts";
 
 const app = express();
 const port = 3001;
