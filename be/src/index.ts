@@ -1,7 +1,7 @@
 import express from "express";
 import { auth } from "express-oauth2-jwt-bearer";
 import cors from "cors";
-import { createGroup } from "./groups/operations.ts";
+import { createGroup } from "./entities/groups/operations.ts";
 import { getAuthContextOrThrow } from "./authContext/AuthContext.ts";
 import { getDbConnection } from "./db/connection.ts";
 

@@ -1,13 +1,13 @@
 import { afterAll, beforeAll, describe, test } from "@jest/globals";
 
 import { createGroup } from "./operations.ts";
-import { DbClient } from "../db/dbService.ts";
-import { createUser } from "../user/operations.ts";
+import { DbClient } from "../../db/dbService.ts";
+import { createUser } from "../users/operations.ts";
 import {
   startTestDbAndGetDbClient,
   tearDownTestDb,
   type TestDbConfig,
-} from "../testUtils/setup.ts";
+} from "../../testUtils/setup.ts";
 
 let dbClient: DbClient;
 let dbConfig: TestDbConfig;
