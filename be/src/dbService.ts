@@ -1,4 +1,4 @@
-import { Pool, type PoolClient, type QueryResult } from "pg";
+import { Pool, type PoolClient } from "pg";
 import { z } from "zod";
 
 const pool = new Pool({
