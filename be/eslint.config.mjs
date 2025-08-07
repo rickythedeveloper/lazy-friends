@@ -16,4 +16,15 @@ export default tseslint.config(
     },
   },
   prettierConfig,
+  {
+    rules: {
+      "no-restricted-imports": [
+        "error",
+        {
+          name: "pg",
+          message: "Do not import pg outside of dbService",
+        },
+      ],
+    },
+  },
 );

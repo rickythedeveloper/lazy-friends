@@ -1,23 +1,42 @@
+// eslint-disable-next-line no-restricted-imports
 import { Pool, type PoolClient } from "pg";
 import { z } from "zod";
 
-const pool = new Pool({
+export interface DbConfig {
+  database: string;
+  port: number;
+  password: string;
+  user: string;
+}
+
+const DB_CONFIG: DbConfig = {
   database: "postgres",
   port: 5432,
   password: "postgres",
   user: "postgres",
-});
+};
 
-export async function getDbConnection(): Promise<DbClient> {
-  const client = await pool.connect();
-
-  return new DbClient(client);
+export function getDbConnection(): DbClient {
+  return new DbClient(DB_CONFIG);
 }
 
 export type DbValue = string | number | boolean | null;
 
 export class DbClient {
-  constructor(private client: PoolClient) {}
+  private _pool: Pool;
+  private _client?: PoolClient;
+
+  constructor(config: DbConfig) {
+    this._pool = new Pool(config);
+  }
+
+  private async getClient(): Promise<PoolClient> {
+    if (!this._client) {
+      this._client = await this._pool.connect();
+    }
+
+    return this._client;
+  }
 
   async query<Row extends z.ZodObject>({
     query,
@@ -28,7 +47,7 @@ export class DbClient {
     values?: DbValue[];
     row_type: Row;
   }): Promise<z.infer<Row>[]> {
-    const rows = await this.client.query(query, values);
+    const rows = await (await this.getClient()).query(query, values);
 
     const validatedRows = z.array(row_type).parse(rows.rows);
 
@@ -36,14 +55,21 @@ export class DbClient {
   }
 
   async beginTransaction() {
-    await this.client.query("BEGIN");
+    await (await this.getClient()).query("BEGIN");
   }
 
   async commit() {
-    await this.client.query("COMMIT");
+    await (await this.getClient()).query("COMMIT");
   }
 
   async rollback() {
-    await this.client.query("ROLLBACK");
+    await (await this.getClient()).query("ROLLBACK");
+  }
+
+  async end() {
+    if (this._client) {
+      this._client.release();
+      await this._pool.end();
+    }
   }
 }
