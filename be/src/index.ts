@@ -1,10 +1,14 @@
-import express, { request } from "express";
+import express, { type Request } from "express";
 import { auth } from "express-oauth2-jwt-bearer";
 import cors from "cors";
 import { createGroup } from "./entities/groups/operations.ts";
-import { getAuthContextOrThrow } from "./authContext/AuthContext.ts";
-import { getDbConnection } from "./db/connection.ts";
+import {
+  type AuthContext,
+  getAuthContextOrThrow,
+} from "./authContext/AuthContext.ts";
+import { getDbClient } from "./db/connection.ts";
 import { z } from "zod";
+import type { DbClient } from "./db/dbService.ts";
 
 const app = express();
 const port = 3001;
@@ -14,29 +18,40 @@ const checkJwt = auth({
   issuerBaseURL: "https://dev-cx465djnl0dls2wi.uk.auth0.com/",
 });
 
-interface PostEndpointDefinition<T, U, V, W> {
+interface PostEndpointDefinition<T, U, V, W, Authenticated extends boolean> {
   validateRequestBody: (body: unknown) => V;
-  requiresAuth: boolean;
-  handler: (request: {
-    pathParams: T;
-    queryParams: U;
-    requestBody: V;
-  }) => Promise<W>;
+  requiresAuth: Authenticated;
+  handler: (
+    request: {
+      pathParams: T;
+      queryParams: U;
+      requestBody: V;
+    },
+    dependencies: Dependencies<Authenticated>,
+  ) => Promise<W>;
 }
 
-interface GetEndpointDefinition<T, U, V> {
-  requiresAuth: boolean;
-  handler: (request: { pathParams: T; queryParams: U }) => Promise<V>;
+interface GetEndpointDefinition<T, U, V, Authenticated extends boolean> {
+  requiresAuth: Authenticated;
+  handler: (
+    request: { pathParams: T; queryParams: U },
+    dependencies: Dependencies<Authenticated>,
+  ) => Promise<V>;
 }
 
 type ApiShape = {
   [key: string]: {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    get: GetEndpointDefinition<any, any, any> | undefined;
+    get: GetEndpointDefinition<any, any, any, boolean> | undefined;
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    post: PostEndpointDefinition<any, any, any, any> | undefined;
+    post: PostEndpointDefinition<any, any, any, any, boolean> | undefined;
   };
 };
+
+interface Dependencies<Authenticated extends boolean> {
+  authContext: Authenticated extends true ? AuthContext : undefined;
+  db: DbClient;
+}
 
 const apiDefinition: ApiShape = {
   "/groups": {
@@ -46,24 +61,28 @@ const apiDefinition: ApiShape = {
       validateRequestBody: (body) => {
         return z.object({ title: z.string() }).parse(body);
       },
-      handler: async ({ requestBody }) => {
-        console.log(requestBody);
-        return Promise.resolve({ id: "heyo" });
+      handler: async ({ requestBody }, { db, authContext }) => {
+        return await createGroup({
+          group: { title: requestBody.title },
+          db,
+          authContext,
+        });
       },
     } satisfies PostEndpointDefinition<
       unknown,
       unknown,
       { title: string },
-      { id: string }
+      { id: string },
+      true
     >,
   },
   "/version": {
     get: {
       requiresAuth: false,
-      handler: async () => {
+      handler: () => {
         return Promise.resolve("v1.0.0");
       },
-    } satisfies GetEndpointDefinition<unknown, unknown, string>,
+    } satisfies GetEndpointDefinition<unknown, unknown, string, false>,
     post: undefined,
   },
 };
@@ -85,13 +104,18 @@ Object.entries(apiDefinition).forEach(([path, methods]) => {
             next();
           },
       async (req, res) => {
+        const dependencies = getDependencies({ req, requiresAuth });
+
         const pathParams = req.params;
         const queryParams = req.query;
         // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-        const responseBody = await handler({
-          pathParams,
-          queryParams,
-        });
+        const responseBody = await handler(
+          {
+            pathParams,
+            queryParams,
+          },
+          dependencies,
+        );
         res.json(responseBody);
       },
     );
@@ -106,28 +130,41 @@ Object.entries(apiDefinition).forEach(([path, methods]) => {
         : (_, __, next) => {
             next();
           },
-      async (req, res, next) => {
-        const authContext = requiresAuth
-          ? getAuthContextOrThrow(req)
-          : undefined;
-        const db = getDbConnection();
+      async (req, res) => {
+        const dependencies = getDependencies({ req, requiresAuth });
 
         // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
         const requestBody = validateRequestBody(req.body);
         const pathParams = req.params;
         const queryParams = req.query;
         // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-        const responseBody = await handler({
-          pathParams,
-          // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-          requestBody,
-          queryParams,
-        });
+        const responseBody = await handler(
+          {
+            pathParams,
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+            requestBody,
+            queryParams,
+          },
+          dependencies,
+        );
         res.json(responseBody);
       },
     );
   }
 });
+
+function getDependencies({
+  req,
+  requiresAuth,
+}: {
+  req: Request;
+  requiresAuth: boolean;
+}): { authContext: AuthContext | undefined; db: DbClient } {
+  return {
+    authContext: requiresAuth ? getAuthContextOrThrow(req) : undefined,
+    db: getDbClient(),
+  };
+}
 
 app.listen(port, () => {
   console.log(`Example app listening on port ${port.toString()}`);

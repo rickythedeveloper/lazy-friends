@@ -7,6 +7,6 @@ const DB_CONFIG: DbConfig = {
   user: "postgres",
 };
 
-export function getDbConnection(): DbClient {
+export function getDbClient(): DbClient {
   return new DbClient(DB_CONFIG);
 }
