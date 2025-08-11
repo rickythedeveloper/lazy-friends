@@ -1,4 +1,4 @@
-import express from "express";
+import express, { request } from "express";
 import { auth } from "express-oauth2-jwt-bearer";
 import cors from "cors";
 import { createGroup } from "./entities/groups/operations.ts";
@@ -14,7 +14,7 @@ const checkJwt = auth({
   issuerBaseURL: "https://dev-cx465djnl0dls2wi.uk.auth0.com/",
 });
 
-interface EndpointDefinition<T, U, V, W> {
+interface PostEndpointDefinition<T, U, V, W> {
   validateRequestBody: (body: unknown) => V;
   requiresAuth: boolean;
   handler: (request: {
@@ -24,15 +24,22 @@ interface EndpointDefinition<T, U, V, W> {
   }) => Promise<W>;
 }
 
+interface GetEndpointDefinition<T, U, V> {
+  requiresAuth: boolean;
+  handler: (request: { pathParams: T; queryParams: U }) => Promise<V>;
+}
+
 type ApiShape = {
   [key: string]: {
-    post: EndpointDefinition<any, any, any, any> | undefined;
-    get: EndpointDefinition<any, any, any, any> | undefined;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    get: GetEndpointDefinition<any, any, any> | undefined;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    post: PostEndpointDefinition<any, any, any, any> | undefined;
   };
 };
 
 const apiDefinition: ApiShape = {
-  groups: {
+  "/groups": {
     get: undefined,
     post: {
       requiresAuth: true,
@@ -43,56 +50,23 @@ const apiDefinition: ApiShape = {
         console.log(requestBody);
         return Promise.resolve({ id: "heyo" });
       },
-    } satisfies EndpointDefinition<
+    } satisfies PostEndpointDefinition<
       unknown,
       unknown,
       { title: string },
       { id: string }
     >,
   },
-  users: {
+  "/version": {
     get: {
       requiresAuth: false,
-      validateRequestBody: () => {},
       handler: async () => {
-        return Promise.resolve({ id: "heyo" });
+        return Promise.resolve("v1.0.0");
       },
-    } satisfies EndpointDefinition<unknown, unknown, unknown, { id: string }>,
+    } satisfies GetEndpointDefinition<unknown, unknown, string>,
     post: undefined,
   },
 };
-
-Object.entries(apiDefinition).forEach(([path, methods]) => {
-  if (methods.get) {
-    const { handler, validateRequestBody } = methods.get;
-    app.post(path, checkJwt, async (req, res, next) => {
-      const requestBody = validateRequestBody(req.body);
-      const pathParams = req.params;
-      const queryParams = req.query;
-      const responseBody = await handler({
-        pathParams,
-        requestBody,
-        queryParams,
-      });
-      res.json(responseBody);
-    });
-  }
-
-  if (methods.post) {
-    const { handler, validateRequestBody } = methods.post;
-    app.post(path, checkJwt, async (req, res, next) => {
-      const requestBody = validateRequestBody(req.body);
-      const pathParams = req.params;
-      const queryParams = req.query;
-      const responseBody = await handler({
-        pathParams,
-        requestBody,
-        queryParams,
-      });
-      res.json(responseBody);
-    });
-  }
-});
 
 app.use(
   cors({
@@ -100,32 +74,59 @@ app.use(
   }),
 );
 
-app.get("/", (req, res) => {
-  console.log("heyo");
-  res.send("Hello World!");
-});
+Object.entries(apiDefinition).forEach(([path, methods]) => {
+  if (methods.get) {
+    const { handler, requiresAuth } = methods.get;
+    app.get(
+      path,
+      requiresAuth
+        ? checkJwt
+        : (_, __, next) => {
+            next();
+          },
+      async (req, res) => {
+        const pathParams = req.params;
+        const queryParams = req.query;
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+        const responseBody = await handler({
+          pathParams,
+          queryParams,
+        });
+        res.json(responseBody);
+      },
+    );
+  }
 
-app.get("/public", (req, res) => {
-  console.log("heyo publid");
-  res.send("Public endpoint");
-});
+  if (methods.post) {
+    const { handler, requiresAuth, validateRequestBody } = methods.post;
+    app.post(
+      path,
+      requiresAuth
+        ? checkJwt
+        : (_, __, next) => {
+            next();
+          },
+      async (req, res, next) => {
+        const authContext = requiresAuth
+          ? getAuthContextOrThrow(req)
+          : undefined;
+        const db = getDbConnection();
 
-app.get("/users", checkJwt, (req, res) => {
-  console.log("heyo private");
-  res.json("Private endpoint");
-});
-
-app.post("/groups", checkJwt, async (req, res) => {
-  const authContext = getAuthContextOrThrow(req);
-  const db = getDbConnection();
-
-  const createdGroup = await createGroup({
-    group: { title: "test groups" },
-    authContext,
-    db,
-  });
-
-  res.json(createdGroup);
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+        const requestBody = validateRequestBody(req.body);
+        const pathParams = req.params;
+        const queryParams = req.query;
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+        const responseBody = await handler({
+          pathParams,
+          // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+          requestBody,
+          queryParams,
+        });
+        res.json(responseBody);
+      },
+    );
+  }
 });
 
 app.listen(port, () => {
