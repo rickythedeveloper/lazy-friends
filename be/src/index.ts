@@ -7,7 +7,7 @@ import {
 } from "./authContext/AuthContext.ts";
 import { getDbClient } from "./db/connection.ts";
 import type { DbClient } from "./db/dbService.ts";
-import { apiDefinition } from "./apiDefinition.ts";
+import { apiDefinition, apiSchema } from "./apiDefinition.ts";
 
 const app = express();
 const port = 3001;
@@ -23,9 +23,23 @@ app.use(
   }),
 );
 
-Object.entries(apiDefinition).forEach(([path, methods]) => {
-  if (methods.get) {
-    const { handler, requiresAuth, responseBodySchema } = methods.get;
+Object.entries(apiSchema).forEach(([path, method]) => {
+  const path2 = path as keyof typeof apiSchema;
+
+  if (!(path in apiDefinition)) {
+    throw new Error(`Path ${path} not found in apiDefinition`);
+  }
+
+  const apiDefinitionForPath = apiDefinition[path2];
+
+  // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+  if (method.get) {
+    if (!apiDefinitionForPath.get) {
+      throw new Error(`Method get not found for path ${path}`);
+    }
+
+    const { responseSchema } = method.get;
+    const { handler, requiresAuth } = apiDefinitionForPath.get;
     app.get(
       path,
       requiresAuth
@@ -46,14 +60,18 @@ Object.entries(apiDefinition).forEach(([path, methods]) => {
           },
           dependencies,
         );
-        res.json(responseBodySchema.parse(responseBody));
+        res.json(responseSchema.parse(responseBody));
       },
     );
   }
 
-  if (methods.post) {
-    const { handler, requiresAuth, requestBodySchema, responseBodySchema } =
-      methods.post;
+  if (method.post) {
+    if (!apiDefinitionForPath.post) {
+      throw new Error(`Method post not found for path ${path}`);
+    }
+
+    const { requestSchema, responseSchema } = method.post;
+    const { handler, requiresAuth } = apiDefinitionForPath.post;
     app.post(
       path,
       requiresAuth
@@ -64,21 +82,20 @@ Object.entries(apiDefinition).forEach(([path, methods]) => {
       async (req, res) => {
         const dependencies = getDependencies({ req, requiresAuth });
 
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-        const requestBody = requestBodySchema.parse(req.body);
+        const requestBody = requestSchema.parse(req.body);
         const pathParams = req.params;
         const queryParams = req.query;
         // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
         const responseBody = await handler(
           {
             pathParams,
-            // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+
             requestBody,
             queryParams,
           },
           dependencies,
         );
-        res.json(responseBodySchema.parse(responseBody));
+        res.json(responseSchema.parse(responseBody));
       },
     );
   }

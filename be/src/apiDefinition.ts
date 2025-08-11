@@ -4,9 +4,6 @@ import type { DbClient } from "./db/dbService.ts";
 import { createGroup } from "./entities/groups/operations.ts";
 
 interface PostEndpointDefinition<T, U, V, W, Authenticated extends boolean> {
-  requestBodySchema: z.ZodType<V>;
-  responseBodySchema: z.ZodType<W>;
-  validateRequestBody: (body: unknown) => V;
   requiresAuth: Authenticated;
   handler: (
     request: {
@@ -20,15 +17,51 @@ interface PostEndpointDefinition<T, U, V, W, Authenticated extends boolean> {
 
 interface GetEndpointDefinition<T, U, V, Authenticated extends boolean> {
   requiresAuth: Authenticated;
-  responseBodySchema: z.ZodType<V>;
   handler: (
     request: { pathParams: T; queryParams: U },
     dependencies: Dependencies<Authenticated>,
   ) => Promise<V>;
 }
 
-type ApiShape = {
+export const apiSchema = {
+  "/groups": {
+    get: {
+      responseSchema: z.array(
+        z.object({
+          id: z.string(),
+          title: z.string(),
+        }),
+      ),
+    },
+    post: {
+      requestSchema: z.object({ title: z.string() }),
+      responseSchema: z.object({ id: z.string() }),
+    },
+  },
+  "/version": {
+    get: {
+      responseSchema: z.string(),
+    },
+    post: undefined,
+  },
+} satisfies {
   [key: string]: {
+    get:
+      | {
+          responseSchema: z.ZodType;
+        }
+      | undefined;
+    post:
+      | {
+          requestSchema: z.ZodType;
+          responseSchema: z.ZodType;
+        }
+      | undefined;
+  };
+};
+
+type ApiShape = {
+  [key in keyof typeof apiSchema]: {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     get: GetEndpointDefinition<any, any, any, boolean> | undefined;
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -43,14 +76,24 @@ interface Dependencies<Authenticated extends boolean> {
 
 export const apiDefinition: ApiShape = {
   "/groups": {
-    get: undefined,
+    get: {
+      requiresAuth: false,
+      handler: () => {
+        return Promise.resolve([
+          {
+            id: "heyo",
+            title: "group",
+          },
+        ]);
+      },
+    } satisfies GetEndpointDefinition<
+      unknown,
+      unknown,
+      z.infer<(typeof apiSchema)["/groups"]["get"]["responseSchema"]>,
+      false
+    >,
     post: {
       requiresAuth: true,
-      requestBodySchema: z.object({ title: z.string() }),
-      responseBodySchema: z.object({ id: z.string() }),
-      validateRequestBody: (body) => {
-        return z.object({ title: z.string() }).parse(body);
-      },
       handler: async ({ requestBody }, { db, authContext }) => {
         return await createGroup({
           group: { title: requestBody.title },
@@ -61,19 +104,23 @@ export const apiDefinition: ApiShape = {
     } satisfies PostEndpointDefinition<
       unknown,
       unknown,
-      { title: string },
-      { id: string },
+      z.infer<(typeof apiSchema)["/groups"]["post"]["requestSchema"]>,
+      z.infer<(typeof apiSchema)["/groups"]["post"]["responseSchema"]>,
       true
     >,
   },
   "/version": {
     get: {
       requiresAuth: false,
-      responseBodySchema: z.string(),
       handler: () => {
         return Promise.resolve("v1.0.0");
       },
-    } satisfies GetEndpointDefinition<unknown, unknown, string, false>,
+    } satisfies GetEndpointDefinition<
+      unknown,
+      unknown,
+      z.infer<(typeof apiSchema)["/version"]["get"]["responseSchema"]>,
+      false
+    >,
     post: undefined,
   },
 } as const;
