@@ -1,6 +1,7 @@
 "use client";
 import { useCreateGroupMutation, useGroupsQuery } from "@lf/shared";
 import { useAuth } from "@/auth/useAuth";
+import { Button } from "@/components/ui/button";
 
 export default function GroupPage() {
   const { accessToken } = useAuth();
@@ -13,16 +14,16 @@ export default function GroupPage() {
   }
 
   return (
-    <div>
-      <button
+    <div className={"p-2"}>
+      <Button
         onClick={() => {
           void createGroup({
             title: "test",
           });
         }}
       >
-        Add
-      </button>
+        Add group
+      </Button>
 
       {groups.map((group) => (
         <div key={group.id}>
