@@ -1,6 +1,6 @@
 // eslint-disable-next-line no-restricted-imports
 import { useAuth0 } from "@auth0/auth0-react";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 
 interface User {
   name: string;
@@ -52,7 +52,7 @@ export function useAuth(): {
         audience: "lazy-friends.ricky-kawagishi.com",
       },
     }).then((token) => setAccessToken(token));
-  }, []);
+  }, [getAccessTokenSilently]);
 
   return {
     login,

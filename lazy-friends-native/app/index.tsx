@@ -1,5 +1,5 @@
 import { Text, View } from "react-native";
-import { QueryClient, useQuery } from "@lf/shared";
+import { useQuery } from "@lf/shared";
 import { useEffect } from "react";
 
 export default function Index() {
