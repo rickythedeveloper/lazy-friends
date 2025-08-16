@@ -1,8 +1,11 @@
 {
   "name": "@lf/shared",
-  "module": "src/index.tsx",
-  "main": "src/index.tsx",
+  "module": "dist/index.js",
+  "main": "dist/index.js",
   "type": "module",
+  "files": [
+    "dist"
+  ],
   "private": true,
   "devDependencies": {
     "@eslint/js": "^9.32.0",
@@ -14,23 +17,24 @@
     "prettier": "3.6.2",
     "react": "^19.1.0",
     "typescript": "^5.8.3",
-    "typescript-eslint": "^8.38.0"
+    "typescript-eslint": "^8.38.0",
+    "zod": "^4.0.17"
   },
   "peerDependencies": {
     "@tanstack/react-query": "^5.83.0",
     "react": "^19",
-    "typescript": "^5"
+    "typescript": "^5",
+    "zod": "^4.0.17"
   },
-  "files": [
-    "src/**/*"
-  ],
   "exports": {
-    ".": "./src/index.tsx"
+    ".": "./dist/index.js"
   },
   "scripts": {
     "style": "prettier . --write",
     "style:ci": "prettier . --check",
     "typeCheck": "tsc --noEmit",
-    "lint": "eslint ."
+    "lint": "eslint .",
+    "build": "tsc",
+    "dev": "tsc --watch"
   }
 }

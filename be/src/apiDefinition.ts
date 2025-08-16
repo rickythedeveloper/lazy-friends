@@ -1,7 +1,7 @@
 import { z } from "zod";
 import type { AuthContext } from "./authContext/AuthContext.ts";
 import type { DbClient } from "./db/dbService.ts";
-import { createGroup } from "./entities/groups/operations.ts";
+import { createGroup, getGroups } from "./entities/groups/operations.ts";
 
 interface PostEndpointDefinition<T, U, V, W, Authenticated extends boolean> {
   requiresAuth: Authenticated;
@@ -78,13 +78,8 @@ export const apiDefinition: ApiShape = {
   "/groups": {
     get: {
       requiresAuth: false,
-      handler: () => {
-        return Promise.resolve([
-          {
-            id: "heyo",
-            title: "group",
-          },
-        ]);
+      handler: (_, { db }) => {
+        return getGroups({ db });
       },
     } satisfies GetEndpointDefinition<
       unknown,

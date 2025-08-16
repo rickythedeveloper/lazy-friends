@@ -2,6 +2,25 @@ import type { AuthContext } from "../../authContext/AuthContext.ts";
 import type { DbClient } from "../../db/dbService.ts";
 import { z } from "zod";
 
+export async function getGroups({
+  db,
+}: {
+  db: DbClient;
+}): Promise<{ id: string; title: string }[]> {
+  const rows = await db.query({
+    query: `
+      SELECT id, title
+      FROM groups
+    `,
+    row_type: z.object({
+      id: z.uuid(),
+      title: z.string(),
+    }),
+  });
+
+  return rows;
+}
+
 interface CreateGroupParams {
   title: string;
 }

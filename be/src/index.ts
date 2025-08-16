@@ -23,6 +23,8 @@ app.use(
   }),
 );
 
+app.use(express.json());
+
 Object.entries(apiSchema).forEach(([path, method]) => {
   const path2 = path as keyof typeof apiSchema;
 

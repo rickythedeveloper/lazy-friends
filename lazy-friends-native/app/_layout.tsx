@@ -1,5 +1,5 @@
 import { Stack } from "expo-router";
-import { QueryClientProvider, QueryClient } from "@lf/shared";
+import { QueryClient } from "@lf/shared";
 import { View } from "react-native";
 
 const queryClient = new QueryClient();

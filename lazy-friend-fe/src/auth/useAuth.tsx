@@ -1,5 +1,6 @@
 // eslint-disable-next-line no-restricted-imports
 import { useAuth0 } from "@auth0/auth0-react";
+import { useEffect, useMemo, useState } from "react";
 
 interface User {
   name: string;
@@ -14,6 +15,7 @@ export function useAuth(): {
   isLoading: boolean;
   user: User | undefined;
   getAccessToken: () => Promise<string | undefined>;
+  accessToken: string;
 } {
   const {
     loginWithRedirect: auth0Login,
@@ -22,6 +24,7 @@ export function useAuth(): {
     isLoading,
     user: auth0User,
     getAccessTokenWithPopup,
+    getAccessTokenSilently,
   } = useAuth0();
 
   const login = () => auth0Login();
@@ -41,6 +44,16 @@ export function useAuth(): {
       },
     });
 
+  const [accessToken, setAccessToken] = useState("");
+
+  useEffect(() => {
+    getAccessTokenSilently({
+      authorizationParams: {
+        audience: "lazy-friends.ricky-kawagishi.com",
+      },
+    }).then((token) => setAccessToken(token));
+  }, []);
+
   return {
     login,
     logout,
@@ -48,5 +61,6 @@ export function useAuth(): {
     isLoading,
     user,
     getAccessToken,
+    accessToken,
   };
 }
