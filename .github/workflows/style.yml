@@ -69,6 +69,7 @@ jobs:
         with:
           version: 10
       - name: Check if build is up to date
+        working-directory: packages/shared
         run: |
           pnpm build
           if [ -n "$(git status --porcelain)" ]; then
