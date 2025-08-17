@@ -60,24 +60,24 @@ jobs:
         run: pnpm test
         working-directory: be
   check-build:
-    - runs-on: ubuntu-22.04
+    runs-on: ubuntu-22.04
 
-    - steps:
+    steps:
       - uses: actions/checkout@v4
       - name: Install pnpm
         uses: pnpm/action-setup@v4
         with:
           version: 10
-    - name: Check if build is up to date
-      run: |
-        pnpm build
-        if [ -n "$(git status --porcelain)" ]; then
-          echo "❌ Build output is not up to date!"
-          echo "The following files have changes after build:"
-          git status --porcelain
-          echo ""
-          echo "Please run 'pnpm build' locally and commit the changes."
-          exit 1
-        else
-          echo "✅ Build output is up to date"
-        fi
+      - name: Check if build is up to date
+        run: |
+          pnpm build
+          if [ -n "$(git status --porcelain)" ]; then
+            echo "❌ Build output is not up to date!"
+            echo "The following files have changes after build:"
+            git status --porcelain
+            echo ""
+            echo "Please run 'pnpm build' locally and commit the changes."
+            exit 1
+          else
+            echo "✅ Build output is up to date"
+          fi
