@@ -3,15 +3,20 @@ import type { DbClient } from "../../db/dbService.ts";
 import { z } from "zod";
 
 export async function getGroups({
+  authContext,
   db,
 }: {
+  authContext: AuthContext;
   db: DbClient;
 }): Promise<{ id: string; title: string }[]> {
   const rows = await db.query({
     query: `
       SELECT id, title
       FROM groups
+      JOIN group_users ON groups.id = group_users.group_id
+      WHERE group_users.user_id = $1
     `,
+    values: [authContext.userId],
     row_type: z.object({
       id: z.uuid(),
       title: z.string(),

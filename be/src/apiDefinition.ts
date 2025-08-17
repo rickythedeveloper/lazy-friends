@@ -77,15 +77,15 @@ interface Dependencies<Authenticated extends boolean> {
 export const apiDefinition: ApiShape = {
   "/groups": {
     get: {
-      requiresAuth: false,
-      handler: (_, { db }) => {
-        return getGroups({ db });
+      requiresAuth: true,
+      handler: (_, { db, authContext }) => {
+        return getGroups({ db, authContext });
       },
     } satisfies GetEndpointDefinition<
       unknown,
       unknown,
       z.infer<(typeof apiSchema)["/groups"]["get"]["responseSchema"]>,
-      false
+      true
     >,
     post: {
       requiresAuth: true,
