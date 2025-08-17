@@ -36,9 +36,15 @@ export async function createGroup({
 }): Promise<{ id: string }> {
   const rows = await db.query({
     query: `
-      INSERT INTO groups (created_by, title)
-      VALUES ($1, $2)
-      RETURNING id
+      WITH inserted_group AS (
+        INSERT INTO groups (created_by, title)
+        VALUES ($1, $2)
+        RETURNING id  
+      )
+      INSERT INTO group_users (group_id, user_id)
+      SELECT id, $1
+      FROM inserted_group
+      RETURNING group_id AS id
     `,
     values: [authContext.userId, group.title],
     row_type: z.object({ id: z.uuid() }),
