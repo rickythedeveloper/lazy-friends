@@ -68,6 +68,9 @@ jobs:
         uses: pnpm/action-setup@v4
         with:
           version: 10
+      - name: Install dependencies
+        run: pnpm install
+        working-directory: packages/shared
       - name: Check if build is up to date
         working-directory: packages/shared
         run: |
