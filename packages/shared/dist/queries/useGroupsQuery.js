@@ -13,5 +13,6 @@ export function useGroupsQuery({ accessToken }) {
             })),
             accessToken,
         }),
+        enabled: !!accessToken,
     });
 }

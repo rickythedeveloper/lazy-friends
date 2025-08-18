@@ -69,7 +69,7 @@ type ApiShape = {
   };
 };
 
-interface Dependencies<Authenticated extends boolean> {
+export interface Dependencies<Authenticated extends boolean> {
   authContext: Authenticated extends true ? AuthContext : undefined;
   db: DbClient;
 }

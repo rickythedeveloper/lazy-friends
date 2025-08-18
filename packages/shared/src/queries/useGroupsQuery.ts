@@ -17,5 +17,6 @@ export function useGroupsQuery({ accessToken }: { accessToken: string }) {
         ),
         accessToken,
       }),
+    enabled: !!accessToken,
   });
 }

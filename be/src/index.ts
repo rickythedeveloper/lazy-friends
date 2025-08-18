@@ -8,6 +8,7 @@ import {
 import { getDbClient } from "./db/connection.ts";
 import type { DbClient } from "./db/dbService.ts";
 import { apiDefinition, apiSchema } from "./apiDefinition.ts";
+import { cleanupDependencies } from "./serverUtils.ts";
 
 const app = express();
 const port = 3001;
@@ -63,6 +64,8 @@ Object.entries(apiSchema).forEach(([path, method]) => {
           dependencies,
         );
         res.json(responseSchema.parse(responseBody));
+
+        await cleanupDependencies(dependencies);
       },
     );
   }
@@ -98,6 +101,8 @@ Object.entries(apiSchema).forEach(([path, method]) => {
           dependencies,
         );
         res.json(responseSchema.parse(responseBody));
+
+        await cleanupDependencies(dependencies);
       },
     );
   }
