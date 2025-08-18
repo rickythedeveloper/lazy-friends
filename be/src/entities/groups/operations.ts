@@ -1,6 +1,8 @@
 import type { AuthContext } from "../../authContext/AuthContext.ts";
 import type { DbClient } from "../../db/dbService.ts";
 import { z } from "zod";
+import { isUserInGroup } from "./access.ts";
+import { validateAccessChecks } from "../../accessChecks.ts";
 
 export async function getGroups({
   authContext,
@@ -63,4 +65,65 @@ export async function createGroup({
   return {
     id: row.id,
   };
+}
+
+export async function addUsersToGroup({
+  groupId,
+  userIds,
+  authContext,
+  db,
+}: {
+  groupId: string;
+  userIds: string[];
+  authContext: AuthContext;
+  db: DbClient;
+}) {
+  await validateAccessChecks([
+    isUserInGroup({
+      userId: authContext.userId,
+      groupId,
+      db,
+    }),
+  ]);
+
+  await db.queryNonReturning({
+    query: `
+      INSERT INTO group_users (group_id, user_id)
+      SELECT $1, user_id
+      FROM UNNEST($2::text[]) AS user_id
+    `,
+    values: [groupId, userIds],
+  });
+}
+
+export async function getUsersInGroup({
+  groupId,
+  authContext,
+  db,
+}: {
+  groupId: string;
+  authContext: AuthContext;
+  db: DbClient;
+}): Promise<string[]> {
+  await validateAccessChecks([
+    isUserInGroup({
+      userId: authContext.userId,
+      groupId,
+      db,
+    }),
+  ]);
+
+  const rows = await db.query({
+    query: `
+      SELECT user_id
+      FROM group_users
+      WHERE group_id = $1
+    `,
+    values: [groupId],
+    row_type: z.object({
+      user_id: z.string(),
+    }),
+  });
+
+  return rows.map((row) => row.user_id);
 }

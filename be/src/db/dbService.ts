@@ -1,6 +1,7 @@
 // eslint-disable-next-line no-restricted-imports
 import { Pool, type PoolClient } from "pg";
 import { z } from "zod";
+import { DbError } from "../server/errors.ts";
 
 export interface DbConfig {
   database: string;
@@ -9,7 +10,7 @@ export interface DbConfig {
   user: string;
 }
 
-export type DbValue = string | number | boolean | null;
+export type DbValue = string | number | boolean | string[] | number[] | null;
 
 export class DbClient {
   private _pool: Pool;
@@ -36,11 +37,30 @@ export class DbClient {
     values?: DbValue[];
     row_type: Row;
   }): Promise<z.infer<Row>[]> {
-    const rows = await (await this.getClient()).query(query, values);
+    let rows: { rows: unknown[] };
+    try {
+      rows = await (await this.getClient()).query(query, values);
+    } catch (err) {
+      throw new DbError("Query failed", err);
+    }
 
     const validatedRows = z.array(row_type).parse(rows.rows);
 
     return validatedRows;
+  }
+
+  async queryNonReturning({
+    query,
+    values,
+  }: {
+    query: string;
+    values?: DbValue[];
+  }): Promise<void> {
+    try {
+      await (await this.getClient()).query(query, values);
+    } catch {
+      throw new DbError("Query failed");
+    }
   }
 
   async beginTransaction() {
