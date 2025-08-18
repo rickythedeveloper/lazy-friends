@@ -9,6 +9,7 @@ import { getDbClient } from "./db/connection.ts";
 import type { DbClient } from "./db/dbService.ts";
 import { apiDefinition, apiSchema } from "./apiDefinition.ts";
 import { cleanupDependencies } from "./serverUtils.ts";
+import { errorHandler } from "./server/errorHandler.ts";
 
 const app = express();
 const port = 3001;
@@ -120,6 +121,8 @@ function getDependencies({
     db: getDbClient(),
   };
 }
+
+app.use(errorHandler);
 
 app.listen(port, () => {
   console.log(`Example app listening on port ${port.toString()}`);
