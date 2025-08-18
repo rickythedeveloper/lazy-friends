@@ -14,7 +14,7 @@ import {
   type TestDbConfig,
 } from "../../testUtils/setup.ts";
 import type { AuthContext } from "../../authContext/AuthContext.ts";
-import { AuthorizationError, DbError } from "../../server/errors.ts";
+import { DbError } from "../../server/errors.ts";
 
 let dbClient: DbClient;
 let dbConfig: TestDbConfig;
