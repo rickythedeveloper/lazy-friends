@@ -9,6 +9,7 @@ import {
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
+import { GiHamburgerMenu } from "react-icons/gi";
 
 interface NavBarItem {
   label: string;
@@ -31,11 +32,17 @@ export function MobileNavBar({ title, items }: MobileNavBarProps) {
   return (
     <Sheet open={isOpen} onOpenChange={setIsOpen}>
       <SheetTrigger asChild>
-        <Button variant="outline">Open</Button>
+        <div
+          className={
+            "text-2xl flex justify-end p-4 sticky top-0 z-50 bg-background"
+          }
+        >
+          <GiHamburgerMenu />
+        </div>
       </SheetTrigger>
       <SheetContent>
         <SheetHeader>
-          <SheetTitle>{title}</SheetTitle>
+          <SheetTitle className={"text-xl"}>{title}</SheetTitle>
         </SheetHeader>
 
         <div className={"p-4 flex flex-col gap-4"}>
