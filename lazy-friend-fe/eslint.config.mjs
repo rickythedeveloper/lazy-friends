@@ -16,8 +16,12 @@ const eslintConfig = [
       "no-restricted-imports": [
         "error",
         {
-          name: "@auth0/auth0-react",
-          message: "Use the in-house useAuth",
+          paths: [
+            {
+              name: "@auth0/auth0-react",
+              message: "Use the in-house useAuth",
+            },
+          ],
         },
       ],
     },
