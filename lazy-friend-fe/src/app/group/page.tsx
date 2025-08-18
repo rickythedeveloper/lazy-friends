@@ -24,6 +24,7 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
+import { GroupList } from "@/components/composites/GroupListItem";
 
 const createGroupFormSchema = z.object({
   title: z.string().min(1),
@@ -103,11 +104,7 @@ export default function GroupPage() {
         </DialogContent>
       </Dialog>
 
-      {groups.map((group) => (
-        <div key={group.id}>
-          {group.id}: {group.title}
-        </div>
-      ))}
+      <GroupList groups={groups} />
     </div>
   );
 }

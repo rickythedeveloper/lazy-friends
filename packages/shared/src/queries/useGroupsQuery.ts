@@ -3,18 +3,18 @@ import { makeGetRequest } from "../requests";
 import { z } from "zod";
 import { queryKeys } from "./queryKeys";
 
+const groupSchema = z.object({
+  id: z.string(),
+  title: z.string(),
+});
+
 export function useGroupsQuery({ accessToken }: { accessToken: string }) {
   return useQuery({
     queryKey: queryKeys.groups,
     queryFn: () =>
       makeGetRequest({
         endpoint: "groups",
-        responseSchema: z.array(
-          z.object({
-            id: z.string(),
-            title: z.string(),
-          }),
-        ),
+        responseSchema: z.array(groupSchema),
         accessToken,
       }),
     enabled: !!accessToken,
