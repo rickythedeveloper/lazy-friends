@@ -12,8 +12,22 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { useState } from "react";
-import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+
+const createGroupFormSchema = z.object({
+  title: z.string().min(1),
+});
 
 export default function GroupPage() {
   const { accessToken } = useAuth();
@@ -22,19 +36,23 @@ export default function GroupPage() {
   const { mutateAsync: createGroup } = useCreateGroupMutation({ accessToken });
 
   const [isCreateGroupModalOpen, setIsCreateGroupModalOpen] = useState(false);
-  const [newGroupName, setNewGroupName] = useState("");
+
+  const createGroupForm = useForm({
+    resolver: zodResolver(createGroupFormSchema),
+    defaultValues: {
+      title: "",
+    },
+  });
 
   if (!groups) {
     return <div>loading...</div>;
   }
 
-  const handleCreateGroup = async () => {
-    if (!newGroupName) {
-      return;
-    }
-
+  const handleCreateGroup = async ({
+    title,
+  }: z.infer<typeof createGroupFormSchema>) => {
     await createGroup({
-      title: newGroupName,
+      title: title,
     });
     setIsCreateGroupModalOpen(false);
   };
@@ -45,33 +63,44 @@ export default function GroupPage() {
         open={isCreateGroupModalOpen}
         onOpenChange={setIsCreateGroupModalOpen}
       >
-        <form>
-          <DialogTrigger asChild>
-            <Button variant="outline">Open Dialog</Button>
-          </DialogTrigger>
-          <DialogContent className="sm:max-w-[425px]">
-            <DialogHeader>
-              <DialogTitle>Create new group</DialogTitle>
-            </DialogHeader>
-            <div className="grid gap-4">
-              <div className="grid gap-3">
-                <Label htmlFor="name">Project name</Label>
-                <Input
-                  name="name"
-                  placeholder={"Italy trip"}
-                  required
-                  onChange={(e) => setNewGroupName(e.target.value)}
+        <DialogTrigger asChild>
+          <Button variant="outline">Open Dialog</Button>
+        </DialogTrigger>
+        <DialogContent className="sm:max-w-[425px]">
+          <Form {...createGroupForm}>
+            <form
+              onSubmit={(e) => {
+                e.preventDefault();
+                createGroupForm.handleSubmit(handleCreateGroup)(e);
+              }}
+            >
+              <DialogHeader>
+                <DialogTitle>Create new group</DialogTitle>
+              </DialogHeader>
+              <div className={"my-2"}>
+                <FormField
+                  control={createGroupForm.control}
+                  name={"title"}
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Group name</FormLabel>
+                      <FormControl>
+                        <Input placeholder={"Italy trip"} {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
                 />
               </div>
-            </div>
-            <DialogFooter>
-              <DialogClose asChild>
-                <Button variant="outline">Cancel</Button>
-              </DialogClose>
-              <Button onClick={handleCreateGroup}>Save changes</Button>
-            </DialogFooter>
-          </DialogContent>
-        </form>
+              <DialogFooter>
+                <DialogClose asChild>
+                  <Button variant="outline">Cancel</Button>
+                </DialogClose>
+                <Button type={"submit"}>Save changes</Button>
+              </DialogFooter>
+            </form>
+          </Form>
+        </DialogContent>
       </Dialog>
 
       {groups.map((group) => (
