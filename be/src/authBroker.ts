@@ -2,13 +2,11 @@ import { z } from "zod";
 import auth0SecretJson from "./secrets/auth0-secrets.json";
 import { ManagementClient } from "auth0";
 
-const authBrokerUserSchema = z.object({
-  email: z.email(),
-  user_id: z.string(),
-  name: z.string(),
-});
-
-type AuthBrokerUser = z.infer<typeof authBrokerUserSchema>;
+interface AuthBrokerUser {
+  userId: string;
+  email: string;
+  name: string;
+}
 
 export class AuthBroker {
   private readonly management = getAuth0ManagementClient();
@@ -16,7 +14,27 @@ export class AuthBroker {
   async getAllUsers(): Promise<AuthBrokerUser[]> {
     const result = await this.management.users.getAll();
 
-    return z.array(authBrokerUserSchema).parse(result.data);
+    return result.data.map(
+      (user): AuthBrokerUser => ({
+        userId: user.user_id,
+        email: user.email,
+        name: user.name,
+      }),
+    );
+  }
+
+  async getUsersByEmail(email: string): Promise<AuthBrokerUser[]> {
+    const result = await this.management.usersByEmail.getByEmail({
+      email,
+    });
+
+    return result.data.map(
+      (user): AuthBrokerUser => ({
+        userId: user.user_id,
+        email: user.email,
+        name: user.name,
+      }),
+    );
   }
 }
 
