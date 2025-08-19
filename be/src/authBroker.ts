@@ -8,7 +8,12 @@ interface AuthBrokerUser {
   name: string;
 }
 
-export class AuthBroker {
+export interface AuthBroker {
+  getAllUsers(): Promise<AuthBrokerUser[]>;
+  getUsersByEmail(email: string): Promise<AuthBrokerUser[]>;
+}
+
+export class AuthBrokerImpl implements AuthBroker {
   private readonly management = getAuth0ManagementClient();
 
   async getAllUsers(): Promise<AuthBrokerUser[]> {
