@@ -1,16 +1,13 @@
-import express, { type Request } from "express";
+import express from "express";
 import { auth } from "express-oauth2-jwt-bearer";
 import cors from "cors";
-import { getAuthContextOrThrow } from "./authContext/AuthContext.ts";
-import { getDbClient } from "./db/connection.ts";
-import {
-  apiDefinition,
-  apiSchema,
-  type Dependencies,
-} from "./apiDefinition.ts";
-import { cleanupDependencies } from "./serverUtils.ts";
+import { apiDefinition, apiSchema } from "./apiDefinition.ts";
 import { errorHandler } from "./server/errorHandler.ts";
-import { AuthBrokerImpl } from "./authBroker.ts";
+import {
+  cleanupDependencies,
+  getDependenciesWithAuth,
+  getDependenciesWithoutAuth,
+} from "./dependencies.ts";
 
 const app = express();
 const port = 3001;
@@ -119,23 +116,3 @@ app.use(errorHandler);
 app.listen(port, () => {
   console.log(`Example app listening on port ${port.toString()}`);
 });
-
-function getDependenciesWithoutAuth(): Dependencies<false> {
-  return {
-    authContext: undefined,
-    db: getDbClient(),
-    authBroker: new AuthBrokerImpl(),
-  };
-}
-
-function getDependenciesWithAuth({
-  req,
-}: {
-  req: Request;
-}): Dependencies<true> {
-  return {
-    authContext: getAuthContextOrThrow(req),
-    db: getDbClient(),
-    authBroker: new AuthBrokerImpl(),
-  };
-}
