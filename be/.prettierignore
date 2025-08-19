@@ -3,3 +3,5 @@ build
 coverage
 
 pnpm-lock.yaml
+
+src/secrets/auth0-secrets.json
