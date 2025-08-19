@@ -7,9 +7,14 @@ import {
 } from "./authContext/AuthContext.ts";
 import { getDbClient } from "./db/connection.ts";
 import type { DbClient } from "./db/dbService.ts";
-import { apiDefinition, apiSchema } from "./apiDefinition.ts";
+import {
+  apiDefinition,
+  apiSchema,
+  type Dependencies,
+} from "./apiDefinition.ts";
 import { cleanupDependencies } from "./serverUtils.ts";
 import { errorHandler } from "./server/errorHandler.ts";
+import { AuthBroker } from "./authBroker.ts";
 
 const app = express();
 const port = 3001;
@@ -52,7 +57,9 @@ Object.entries(apiSchema).forEach(([path, method]) => {
             next();
           },
       async (req, res) => {
-        const dependencies = getDependencies({ req, requiresAuth });
+        const dependencies = requiresAuth
+          ? getDependenciesWithAuth({ req })
+          : getDependenciesWithoutAuth();
 
         const pathParams = req.params;
         const queryParams = req.query;
@@ -86,7 +93,9 @@ Object.entries(apiSchema).forEach(([path, method]) => {
             next();
           },
       async (req, res) => {
-        const dependencies = getDependencies({ req, requiresAuth });
+        const dependencies = requiresAuth
+          ? getDependenciesWithAuth({ req })
+          : getDependenciesWithoutAuth();
 
         const requestBody = requestSchema.parse(req.body);
         const pathParams = req.params;
@@ -109,16 +118,23 @@ Object.entries(apiSchema).forEach(([path, method]) => {
   }
 });
 
-function getDependencies({
+function getDependenciesWithoutAuth(): Dependencies<false> {
+  return {
+    authContext: undefined,
+    db: getDbClient(),
+    authBroker: new AuthBroker(),
+  };
+}
+
+function getDependenciesWithAuth({
   req,
-  requiresAuth,
 }: {
   req: Request;
-  requiresAuth: boolean;
-}): { authContext: AuthContext | undefined; db: DbClient } {
+}): Dependencies<true> {
   return {
-    authContext: requiresAuth ? getAuthContextOrThrow(req) : undefined,
+    authContext: getAuthContextOrThrow(req),
     db: getDbClient(),
+    authBroker: new AuthBroker(),
   };
 }
 

@@ -2,6 +2,7 @@ import { z } from "zod";
 import type { AuthContext } from "./authContext/AuthContext.ts";
 import type { DbClient } from "./db/dbService.ts";
 import { createGroup, getGroups } from "./entities/groups/operations.ts";
+import type { AuthBroker } from "./authBroker.ts";
 
 interface PostEndpointDefinition<T, U, V, W, Authenticated extends boolean> {
   requiresAuth: Authenticated;
@@ -72,6 +73,7 @@ type ApiShape = {
 export interface Dependencies<Authenticated extends boolean> {
   authContext: Authenticated extends true ? AuthContext : undefined;
   db: DbClient;
+  authBroker: AuthBroker;
 }
 
 export const apiDefinition: ApiShape = {
