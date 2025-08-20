@@ -47,12 +47,14 @@ export function useAuth(): {
   const [accessToken, setAccessToken] = useState("");
 
   useEffect(() => {
-    getAccessTokenSilently({
-      authorizationParams: {
-        audience: "lazy-friends.ricky-kawagishi.com",
-      },
-    }).then((token) => setAccessToken(token));
-  }, [getAccessTokenSilently]);
+    if (isAuthenticated) {
+      getAccessTokenSilently({
+        authorizationParams: {
+          audience: "lazy-friends.ricky-kawagishi.com",
+        },
+      }).then((token) => setAccessToken(token));
+    }
+  }, [getAccessTokenSilently, isAuthenticated]);
 
   return {
     login,
