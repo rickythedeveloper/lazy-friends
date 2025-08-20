@@ -31,15 +31,15 @@ export function MobileNavBar({ title, items }: MobileNavBarProps) {
 
   return (
     <Sheet open={isOpen} onOpenChange={setIsOpen}>
-      <SheetTrigger asChild>
-        <div
-          className={
-            "text-2xl flex justify-end p-4 sticky top-0 z-50 bg-background"
-          }
-        >
-          <GiHamburgerMenu />
-        </div>
-      </SheetTrigger>
+      <div
+        className={
+          "text-2xl flex justify-end p-4 sticky top-0 z-50 bg-background"
+        }
+      >
+        <SheetTrigger asChild>
+          <GiHamburgerMenu className={"cursor-pointer"} />
+        </SheetTrigger>
+      </div>
       <SheetContent>
         <SheetHeader>
           <SheetTitle className={"text-xl"}>{title}</SheetTitle>
