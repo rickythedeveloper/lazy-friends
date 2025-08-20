@@ -5,6 +5,7 @@ import "./globals.css";
 import { AuthProvider } from "@/auth/AuthProvider";
 import { QueryClientProvider, QueryClient } from "@lf/shared";
 import { MobileNavBar } from "@/components/composites/MobileNavBar";
+import { useAuthRedirect } from "@/auth/useAuthRedirect";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -23,6 +24,8 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  useAuthRedirect();
+
   return (
     <html lang="en">
       <body
